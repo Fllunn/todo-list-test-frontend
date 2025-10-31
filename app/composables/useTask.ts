@@ -1,3 +1,4 @@
+// import { config } from "process"
 import type { Task } from "~/types/task.interface"
 
 export function useTask() {
@@ -8,7 +9,8 @@ export function useTask() {
 
   async function addTask(params: Pick<Task, 'title' | 'notes'>) {
     try {
-      const response = await $fetch<Task>('http://localhost:5000/tasks/add-task', {
+      const config = useRuntimeConfig()
+      const response = await $fetch<Task>(config.apiUrl +  'tasks/add-task', {
         method: 'POST',
         body: params
       })
@@ -20,7 +22,8 @@ export function useTask() {
 
   async function deleteTask(_id: string){
     try{
-        let res = await $fetch<boolean>('http://localhost:5000/tasks/delete-task', {
+      const config = useRuntimeConfig()
+        let res = await $fetch<boolean>(config.public.apiUrl +  'tasks/delete-task', {
         method: "DELETE",
         body: { _id }
     })
@@ -42,7 +45,8 @@ export function useTask() {
   async function editTask() {
     if (!currentTaskToEdit.value) return
     try {
-      let res = await $fetch<boolean>('http://localhost:5000/tasks/edit-task', {
+      const config = useRuntimeConfig()
+      let res = await $fetch<boolean>(config.public.apiUrl +  "tasks/edit-task", {
         method: "PATCH",
         body: {
           _id: currentTaskToEdit.value._id,
@@ -69,7 +73,8 @@ export function useTask() {
 
   async function getAllTasks() {
     try {
-      let response = await $fetch<Task[]>("http://localhost:5000/tasks/get-all", { method: "GET" })
+      const config = useRuntimeConfig()
+      let response = await $fetch<Task[]>(config.public.apiUrl + "tasks/get-all", { method: "GET" })
 
       tasks.value = response
     } catch (error) {

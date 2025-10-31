@@ -1,11 +1,12 @@
 <script setup lang="ts">
+const config = useRuntimeConfig()
 // const router = useRouter();
 
 // function goToTasks() {
 //   router.push("/tasks")
 // }
 
-let response = await $fetch("http://localhost:5000/", {
+let response = await $fetch(config.public.apiUrl, {
   method: "get"
 })
 

@@ -10,7 +10,7 @@ export function useTask() {
   async function addTask(params: Pick<Task, 'title' | 'notes'>) {
     try {
       const config = useRuntimeConfig()
-      const response = await $fetch<Task>(config.apiUrl +  'tasks/add-task', {
+      const response = await $fetch<Task>(config.public.apiUrl +  'tasks/add-task', {
         method: 'POST',
         body: params
       })

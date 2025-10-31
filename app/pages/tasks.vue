@@ -13,14 +13,20 @@ function deleteTask(id: string) {
   taskStore.deleteTask(id)
 }
 
+let loading = ref<boolean>(false)
+
 function editTask(_id: string){
+    loading.value = true
     taskStore.openEditDialog(_id)
+    loading.value = false
 }
 
 function clearForm() {
   form.value.title = ""
   form.value.notes = ""
 }
+
+
 
 function addTask() {
   let toSend = {
@@ -40,7 +46,7 @@ await taskStore.getAllTasks();
   <v-container>
     <v-row>
       <v-col cols="12">
-        <v-btn @click="router.push('/')">назад</v-btn>
+        <v-btn @click="router.push('/')" prepend-icon="mdi-chevron-left">назад</v-btn>
       </v-col>
 
       <v-col cols="12">
@@ -48,11 +54,11 @@ await taskStore.getAllTasks();
         <v-textarea v-model="form.notes" label="Заметки к задаче" variant="outlined"></v-textarea>
 
         <v-btn @click="addTask">добавить</v-btn>
+
+        
       </v-col>
 
-      {{ form }}
-
-      <v-col cols="4" v-for="task of tasks" :key="task._id">
+      <v-col cols="4" md="6" lg="4" v-for="task of tasks" :key="task._id">
         <TaskCard :task="task" @delete-task="deleteTask" @edit-task="editTask" />
       </v-col>
     </v-row>

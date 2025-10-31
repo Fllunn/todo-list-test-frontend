@@ -42,7 +42,7 @@ export function useTask() {
   async function editTask() {
     if (!currentTaskToEdit.value) return
     try {
-      const updated = await $fetch<Task>("http://localhost:5000/tasks/edit-task", {
+      let res = await $fetch<boolean>('http://localhost:5000/tasks/edit-task', {
         method: "PATCH",
         body: {
           _id: currentTaskToEdit.value._id,
@@ -50,9 +50,18 @@ export function useTask() {
           notes: currentTaskToEdit.value.notes
         }
       })
-      const idx = tasks.value.findIndex(t => t._id === updated._id)
-      if (idx !== -1) tasks.value[idx] = updated
-      closeEditDialog()
+
+      if (res) {
+        for (let i = 0; i < tasks.value.length; i++) {
+          if (tasks.value[i]?._id == currentTaskToEdit.value._id) {
+            tasks.value[i]!.title = currentTaskToEdit.value!.title
+            tasks.value[i]!.notes = currentTaskToEdit.value!.notes
+            break
+          }
+        }
+        
+        closeEditDialog()
+      }
     } catch (error) {
       console.log("useTask/editTask error", error)
     }
@@ -71,7 +80,10 @@ export function useTask() {
   function openEditDialog(_id: string){
     for (let i = 0; i < tasks.value.length; i++) {
             if (tasks.value[i]?._id == _id) {
-                currentTaskToEdit.value = tasks.value[i];
+                const originalTask = tasks.value[i];
+                const copy: Task = Object.assign({}, originalTask);
+
+                currentTaskToEdit.value = copy;
                 editTaskDialog.value = true;
                 return;
         }
